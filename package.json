@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "elmx": "^1.0.1",
+    "gulp": "^3.9.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-rename": "^1.2.2",
+    "mkdirp": "^0.5.1"
+  }
+}

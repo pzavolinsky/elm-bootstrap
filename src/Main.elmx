@@ -1,0 +1,109 @@
+module Main where
+
+import Bootstrap.Dropdown as Dropdown
+import Bootstrap.Select as Select
+import Bootstrap.Modal as Modal
+import StartApp.Simple as StartApp
+import Signal
+import Html exposing (Html)
+import Html.Attributes
+import Html.Events exposing (onClick)
+
+
+-- MODEL
+type alias Model =
+  { showDropdown : Bool
+  , showModal : Bool
+  , simpson : Select.Model String
+  }
+init : Model
+init =
+  { showDropdown = False
+  , showModal = False
+  , simpson = Select.init ["Homer","Marge","Bart","Lisa","Maggie"] "Bart"
+  }
+
+type Action
+  = Dropdown Bool
+  | Click String
+  | OpenModal
+  | SaveModal
+  | CloseModal
+  | Select (Select.Action String)
+
+update : Action -> Model -> Model
+update action model =
+  case action of
+    Click s ->
+      let
+        _ = Debug.log "click" s
+      in
+        { model | showDropdown = False }
+    Dropdown m ->
+      { model | showDropdown = m }
+    OpenModal ->
+      { model | showModal = True, showDropdown = False }
+    SaveModal ->
+      { model | showModal = False, simpson = Select.set "Maggie" model.simpson }
+    CloseModal ->
+      { model | showModal = False }
+    Select a ->
+      { model | simpson = Select.update a model.simpson }
+
+
+dropdownView : Signal.Address Action -> Bool -> Html
+dropdownView address showDropdown =
+  let
+    button = Dropdown.button
+      <button class="btn btn-primary" type="button">
+        Dropdown <span class="caret"></span>
+      </button>
+    items =
+      [ Dropdown.Header "Actions"
+      , Dropdown.Item (Click "a1") "Action 1"
+      , Dropdown.Item (Click "a2") "Action 2"
+      , Dropdown.Divider
+      , Dropdown.Item OpenModal "Show modal"
+      ]
+    in
+      Dropdown.viewFor Dropdown button items address showDropdown
+
+modalView : Signal.Address Action -> Html
+modalView address =
+  let
+    title = Modal.title "Choose Maggie"
+    body = <p>Should we set that thing to "Maggie"</p>
+    footer =
+      <div>
+        <button type="button" class="btn btn-default" {onClick address CloseModal}>Nop</button>
+        <button type="button" class="btn btn-primary" {onClick address SaveModal}>Sure!</button>
+      </div>
+  in
+    Modal.view title body footer address CloseModal
+
+
+selectView : Signal.Address Action -> Select.Model String -> Html
+selectView address = Select.view
+  Html.text
+  "btn btn-default"
+  (Signal.forwardTo address Select)
+
+view : Signal.Address Action -> Model -> Html
+view address model =
+  let
+    modal = if model.showModal
+      then [ modalView address ]
+      else []
+  in
+    <div>
+      {dropdownView address model.showDropdown}
+      {:modal}
+      {selectView address model.simpson}
+    </div>
+
+main : Signal Html
+main = StartApp.start
+  { model = init
+  , update = update
+  , view = view
+  }

@@ -1,0 +1,90 @@
+module Bootstrap.Dropdown where
+
+import Html exposing (Html)
+import Html.Attributes exposing (attribute)
+import Html.Events exposing (onClick, onWithOptions)
+import Json.Decode as Json
+import Bootstrap.Types exposing (HtmlCtor, View)
+
+
+-- TYPES
+type alias Button a = (Model -> a) -> Signal.Address a -> Model -> Html
+type MenuItem a
+  = ItemHtml a Html
+  | DisabledHtml Html
+  | HeaderHtml Html
+  | Item a String
+  | Disabled String
+  | Header String
+  | Divider
+  | Custom Html
+
+-- MODEL
+type alias Model = Bool
+init : Bool -> Model
+init = identity
+
+
+-- UPDATE
+type alias Action = Model
+update : Action -> Model -> Model
+update action _ = action
+
+-- VIEW
+button : HtmlCtor -> List Html.Attribute -> List Html -> Button a
+button f attrs children wrap address model =
+  let
+    expanded = if model then [ attribute "aria-expanded" "true" ] else []
+    click = onClick address (wrap (not model))
+  in
+    f (attrs ++ expanded ++ [click]) children
+
+view : Button Action -> List (MenuItem Action) -> View Action Model
+view button address model = viewFor identity button address model
+
+menu : Signal.Address a -> List (MenuItem a) -> Html
+menu address items =
+  let
+    click a = onWithOptions "click"
+      { stopPropagation = True
+      , preventDefault = True
+      }
+      Json.value (\_ -> Signal.message address a)
+    mapItem item =
+      case item of
+        ItemHtml a h ->
+          <li><a href="#" {click a}>{h}</a></li>
+        Item a t ->
+          <li><a href="#" {click a}>{=t}</a></li>
+        DisabledHtml h ->
+          <li class="disabled"><a href="#">{h}</a></li>
+        Disabled t ->
+          <li class="disabled"><a href="#">{=t}</a></li>
+        HeaderHtml h ->
+          <li class="dropdown-header">{h}</li>
+        Header t ->
+          <li class="dropdown-header">{=t}</li>
+        Divider ->
+          <li role="separator" class="divider"/></li>
+        Custom h ->
+          h
+    lis = List.map mapItem items
+  in
+    <ul class="dropdown-menu">{:lis}</ul>
+
+viewFor : (Model -> a) -> Button a -> List (MenuItem a) -> View a Model
+viewFor = viewWithClass "dropdown"
+
+viewWithClass : String -> (Model -> a) -> Button a -> List (MenuItem a) -> View a Model
+viewWithClass containerClass wrap button children address model =
+  let
+    open = if model then " open" else ""
+    backdrop = if model
+      then [<div class="modal-backdrop fade" {onClick address (wrap False)}></div>]
+      else []
+  in
+    <div class={containerClass ++ open}>
+      {button wrap address model}
+      {menu address children}
+      {:backdrop}
+    </div>
