@@ -8,6 +8,8 @@ Implemented components:
  - [Select](#Select)
  - [Modal](#Modal)
 
+Check the [DEMO](http://pzavolinsky.github.io/elm-bootstrap/)!
+
 Dropdown
 --------
 
@@ -282,8 +284,7 @@ view : Html -> Html -> Html -> Signal.Address a -> a -> Html
 
 The `Modal.title` is just an alias for `Html.text` but you can use more fancy titles by passing a custom `Html` element directly to `Modal.view`.
 
-TODO:
- - write some documentation.
+TODO
+----
  - pick a namespace that plays nice with the rest of the world.
- - make a demo page.
  - make an Elm package.
