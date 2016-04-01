@@ -4,9 +4,9 @@ Elm Bootstrap wrappers
 This projects aims at providing Elm implementations of non-trivial Bootstrap components.
 
 Implemented components:
- - [Dropdown](#Dropdown)
- - [Select](#Select)
- - [Modal](#Modal)
+ - [Dropdown](#dropdown)
+ - [Select](#select)
+ - [Modal](#modal)
 
 Check the [DEMO](http://pzavolinsky.github.io/elm-bootstrap/)!
 
