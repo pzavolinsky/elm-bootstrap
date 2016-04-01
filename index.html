@@ -14,14 +14,24 @@
   </head>
   <body>
     <div class="container">
-      <div id="main"></div>
+      <h1>Dropdown</h1>
+      <div id="dropdown"></div>
+      <hr>
+      <h1>Select</h1>
+      <div id="select"></div>
+      <hr>
+      <h1>Modal</h1>
+      <div id="modal"></div>
+      <hr>
+      <h1>Example</h1>
+      <div id="example"></div>
     </div>
     <script src="dist/elm.js"></script>
     <script>
-      var app = Elm.embed(
-        Elm.Main,
-        document.getElementById('main')
-      );
+      Elm.embed(Elm.Test.Dropdown, document.getElementById('dropdown'));
+      Elm.embed(Elm.Test.Select, document.getElementById('select'));
+      Elm.embed(Elm.Test.Modal, document.getElementById('modal'));
+      Elm.embed(Elm.Test.Example, document.getElementById('example'));
     </script>
   </body>
 </html>

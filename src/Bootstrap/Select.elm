@@ -36,13 +36,16 @@ update action model =
 
 -- VIEW
 view : (a -> Html) -> String -> Signal.Address (Action a) -> Model a -> Html
-view render class address model =
+view render = view' render render
+
+view' : (a -> Html) -> (a -> Html) -> String -> Signal.Address (Action a) -> Model a -> Html
+view' renderValue renderItem class address model =
   let
     button = Dropdown.button
       Html.button [Html.Attributes.attribute "class" class, Html.Attributes.attribute "type" "button"] [
-        render model.value, Html.text " ", Html.span [Html.Attributes.attribute "class" "caret"] []
+        renderValue model.value, Html.text " ", Html.span [Html.Attributes.attribute "class" "caret"] []
       ]
-    mapOption o = Dropdown.ItemHtml (Select o) (render o)
+    mapOption o = Dropdown.ItemHtml (Select o) (renderItem o)
     items = List.map mapOption model.options
   in
     Dropdown.viewFor Toggle button items address model.open

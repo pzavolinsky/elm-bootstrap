@@ -10,14 +10,14 @@ import Bootstrap.Types exposing (HtmlCtor, View)
 -- TYPES
 type alias Button a = (Model -> a) -> Signal.Address a -> Model -> Html
 type MenuItem a
-  = ItemHtml a Html
-  | DisabledHtml Html
-  | HeaderHtml Html
-  | Item a String
-  | Disabled String
-  | Header String
-  | Divider
-  | Custom Html
+  = ItemHtml a Html -- An HTML item that triggers action `a` when clicked
+  | DisabledHtml Html -- An HTML item that is disabled
+  | HeaderHtml Html -- An HTML header
+  | Item a String -- A string item that triggers action `a` when clicked
+  | Disabled String -- A string item that is disabled
+  | Header String -- A string header
+  | Divider -- A menu divider
+  | Custom Html -- A custom menu item (must include the LI)
 
 -- MODEL
 type alias Model = Bool
